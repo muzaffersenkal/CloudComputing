@@ -26,6 +26,7 @@ The data provided shows performance timing of the render application, performanc
 
 This file contains application checkpoint events throughout the execution of the render job. Examples of the events are given for the `eventName` field.
 
+
 ### Schema
 
 1. **timestamp:**    time of data creation. Ex: `2018-11-08T07:41:55.921Z`
@@ -45,7 +46,11 @@ This file contains application checkpoint events throughout the execution of the
 
 6. **taskId:**   ID of the Azure batch task. Ex: `b47f0263-ba1c-48a7-8d29-4bf021b72043`
 
+### Shape
 
+```{r dim}
+dim(application.checkpoints)
+```
 
 ### Summary 
 
@@ -76,6 +81,11 @@ This file contains metrics that were output regarding the status of the GPU on t
 
 8. **gpuMemUtilPerc:**   Percent utilisation of the GPU memory. Ex: `52`
 
+### Shape
+
+```{r dim}
+dim(gpu)
+```
 
 ### Summary 
 
@@ -108,12 +118,43 @@ This file contains the x,y co-ordinates of which part the image was being render
 
 ### Summary 
 
-```{r,  echo=FALSE}
-summary(gpu)
+### Shape
+
+```{r dim}
+dim(task-x-y)
 ```
+
+```{r,  echo=FALSE}
+summary(task-x-y)
+```
+
+
 
 ---
 
+## Data Quality
+
+### Missing Values
+
+```{r}
+sum(is.na(gpu))
+sum(is.na(application.checkpoints))
+sum(is.na(task.x.y))
+```
+
+There is no missing data on the datasets.
+
+
+### Duplicate Rows
+
+```{r}
+nrow(gpu) - gpu %>% distinct() %>% nrow()
+nrow(application.checkpoints) - application.checkpoints %>% distinct() %>% nrow()
+nrow(task.x.y) - task.x.y %>% distinct() %>% nrow()
+```
+
+
+There are 2.470 rows are duplicated in application.checkpoint data. We should consider in our analysis. In gpu dataframe , there are only 9 rows duplicated. However, task.x.y dataframe does not contain duplicate rows.
 
 
 
