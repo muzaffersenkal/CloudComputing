@@ -11,10 +11,12 @@ knitr::opts_knit$set(root.dir= normalizePath('..'))
 # Business Understanding
 
 
-With the increase in IOT devices in recent years, digital twin technology plays an important role for companies.It is a virtual representation of the physical system. (https://www.ibm.com/blogs/internet-of-things/iot-cheat-sheet-digital-twin/)
+With the increase in IOT devices in recent years, digital twin technology plays an important role for companies.It is a virtual representation of the physical system [1].
 It helps companies or organizations measure and visualize the performance of products in real time, as well as understand how they will perform in the future.
 
-The Newcastle Urban Observatory has been gathering environmental data from IoT devices which are located in Newcastle-upon Tyne. This data is presented in a browser by making a 3D visualization of the city.These visualization images are not simple image, they contain over one trillion pixels called terapixel images. (https://arxiv.org/pdf/1902.04820.pdf). It allows viewers to interactively zoom into incredible detail on big data at multiple scales. On these images, the data received from the sensors such as temperature, humidity are shown live. Terapixel visualizations is is a crucial computational cost,  1024 public cloud GPU nodes are used for this cost. 
+The Newcastle Urban Observatory has been gathering environmental data from IoT devices which are located in Newcastle-upon Tyne. This data is presented in a browser by making a 3D visualization of the city. These visualization images are not simple image, they contain over one trillion pixels called terapixel images [2]. It allows viewers to interactively zoom into incredible detail on big data at multiple scales. On these images, the data received from the sensors such as temperature, humidity are shown live. Terapixel visualizations is is a crucial computational cost, so the university has used Microsoft Azure cloud services to  perform the rendering process. Totally 1024 public cloud GPU nodes are used for this cost. 
+
+The terapixel image  consists of (1,048,576)**2 pixels, and image tiles are 512x512 pixels in JPG format [2]. In this case, 5,592,405 image tiles will be created, and  581,610,120 kB storage will be needed. GPU nodes will compute  65,793 tasks. 
 
 
 
@@ -30,4 +32,8 @@ Therefore, in this data mining project, the performance of the gpu-based system 
 * Can we identify particular GPU cards (based on their serial numbers) whose performance differs to other cards? (i.e. perpetually slow cards).
 * What can we learn about the efficiency of the task scheduling process?
 
+## References
 
+1. Maggie Mae Armstrong. (2020, December 4). Cheat sheet: What is Digital Twin? Internet of Things blog. IBM Business Operations Blog. https://www.ibm.com/blogs/internet-of-things/iot-cheat-sheet-digital-twin/
+
+2. Holliman, N. S., Antony, M., Charlton, J., Dowsland, S., James, P., & Turner, M. (2019). Petascale Cloud Supercomputing for Terapixel Visualization of a Digital Twin. ArXiv.org. https://arxiv.org/abs/1902.04820

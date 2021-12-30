@@ -8,7 +8,6 @@ knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_knit$set(root.dir= normalizePath('..'))
 ```
 
-
 ```{r, echo=FALSE,warning=FALSE,message=FALSE,error=FALSE, results='hide'}
 library(ProjectTemplate)
 load.project()
@@ -17,47 +16,48 @@ load.project()
 
 # Data Understanding
 
-The datasets was created during a run using 1024 GPU nodes. There are 3 levels visualisation output; 4, 8, 12.
-
-The data provided shows performance timing of the render application, performance of the GPU card, and details of which part of the image was being rendered in each task.
-
+3 data sets which are **Application Checkpoints**, **Gpu**, and **Task x.y** was created during a production of terapixel image using 1024 GPU nodes.These files are in well-know format which is comma-separated value format. The data provided shows performance timing of the render application, performance of the GPU card, and details of which part of the image was being rendered in each task.
 
 ## application-checkpoints.csv (111.2MB)
 
 This file contains application checkpoint events throughout the execution of the render job. Examples of the events are given for the `eventName` field.
 
-
 ### Schema
 
-1. **timestamp:**    time of data creation. Ex: `2018-11-08T07:41:55.921Z`
-2. **hostname:**   unique hostname created by the Azure batch system. Ex: `0d56a730076643d585f77e00d2d8521a00000N`
-3. **eventName** Name of the event occuring within the rendering application.
-    + **TotalRender** is the entire task
-    + **Render** is when the image tile is is being rendered
-    + **Saving Config** is simply a measure of configuration overhead
-    + **Tiling** is where post processing of the rendered tile is taking place
-    + **Uploading** is where the output from post processing is uploaded to Azure Blob Storage
+1.  **timestamp:** time of data creation. Ex: `2018-11-08T07:41:55.921Z`
 
-4. **eventType:** 
-    + **START**
-    + **STOP**
+2.  **hostname:** unique hostname created by the Azure batch system. Ex: `0d56a730076643d585f77e00d2d8521a00000N`
 
-5. **jobId:**    ID of the Azure batch job. Ex: `1024-lvl12-7e026be3-5fd0-48ee-b7d1-abd61f747705`
+3.  **eventName** Name of the event occuring within the rendering application.
 
-6. **taskId:**   ID of the Azure batch task. Ex: `b47f0263-ba1c-48a7-8d29-4bf021b72043`
+    -   **TotalRender** is the entire task
+    -   **Render** is when the image tile is is being rendered
+    -   **Saving Config** is simply a measure of configuration overhead
+    -   **Tiling** is where post processing of the rendered tile is taking place
+    -   **Uploading** is where the output from post processing is uploaded to Azure Blob Storage
+
+4.  **eventType:**
+
+    -   **START**
+    -   **STOP**
+
+5.  **jobId:** ID of the Azure batch job. Ex: `1024-lvl12-7e026be3-5fd0-48ee-b7d1-abd61f747705`
+
+6.  **taskId:** ID of the Azure batch task. Ex: `b47f0263-ba1c-48a7-8d29-4bf021b72043`
 
 ### Shape
 
-```{r dim}
+```{r }
 dim(application.checkpoints)
 ```
 
-### Summary 
+### Summary
+
+Application checkpoints data includes 660400 rows and 6 columns. All columns represented as a character type. However, the types of some columns need to be changed before starting data analysis. For example, timestamp column should be represented by time format.
 
 ```{r,  echo=FALSE}
 summary(application.checkpoints)
 ```
-
 
 ## gpu.csv (208.7MB)
 
@@ -65,36 +65,37 @@ This file contains metrics that were output regarding the status of the GPU on t
 
 ## Schema
 
-1. **timestamp:**  time of data creation. Ex: `2018-11-08T08:27:10.314Z`
+1.  **timestamp:** time of data creation. Ex: `2018-11-08T08:27:10.314Z`
 
-2. **hostname:** unique hostname created by the Azure. Ex: `8b6a0eebc87b4cb2b0539e81075191b900001C`
+2.  **hostname:** unique hostname created by the Azure. Ex: `8b6a0eebc87b4cb2b0539e81075191b900001C`
 
-3. **gpuSerial:**  The serial number of the physical GPU card.Ex: "0323217055910"
+3.  **gpuSerial:** The serial number of the physical GPU card.Ex: "0323217055910"
 
-4. **gpuUUID:** The unique system id assigned by the Azure system to the GPU unit. Ex: `GPU-1d1602dc-f615-a7c7-ab53-fb4a7a479534`
+4.  **gpuUUID:** The unique system id assigned by the Azure system to the GPU unit. Ex: `GPU-1d1602dc-f615-a7c7-ab53-fb4a7a479534`
 
-5. **powerDrawWatt:**    Power draw of the GPU in watts. Ex: `131.55`
+5.  **powerDrawWatt:** Power draw of the GPU in watts. Ex: `131.55`
 
-6. **gpuTempC:**   Temperature of the GPU in Celsius Ex: `48`
+6.  **gpuTempC:** Temperature of the GPU in Celsius Ex: `48`
 
-7. **gpuUtilPerc:**    Percent utilisation of the GPU Core(s). Ex: `92`
+7.  **gpuUtilPerc:** Percent utilisation of the GPU Core(s). Ex: `92`
 
-8. **gpuMemUtilPerc:**   Percent utilisation of the GPU memory. Ex: `52`
+8.  **gpuMemUtilPerc:** Percent utilisation of the GPU memory. Ex: `52`
 
 ### Shape
 
-```{r dim}
+```{r }
 dim(gpu)
 ```
 
-### Summary 
+### Summary
+
+Gpu data set consist of 1048575 rows and 8 columns. timestamp, hostname, and gpuUUID columns are listed as a character and the remains are represented as numerical.
 
 ```{r,  echo=FALSE}
 summary(gpu)
 ```
 
-
----
+------------------------------------------------------------------------
 
 ## task-x-y.csv (6.2MB)
 
@@ -102,48 +103,47 @@ This file contains the x,y co-ordinates of which part the image was being render
 
 ### Schema
 
-1. **jobId:** Id of the Azure batch job. Ex: `1024-lvl12-7e026be3-5fd0-48ee-b7d1-abd61f747705`
+1.  **jobId:** Id of the Azure batch job. Ex: `1024-lvl12-7e026be3-5fd0-48ee-b7d1-abd61f747705`
 
-2. **taskId:**   ID of the Azure batch task. Ex: `b47f0263-ba1c-48a7-8d29-4bf021b72043`
+2.  **taskId:** ID of the Azure batch task. Ex: `b47f0263-ba1c-48a7-8d29-4bf021b72043`
 
-3. **x:**  X co-ordinate of the image tile being rendered. Ex: `116`
+3.  **x:** X co-ordinate of the image tile being rendered. Ex: `116`
 
-4. **y:**    Y co-ordinate of the image tile being rendered. Ex: `178`
+4.  **y:** Y co-ordinate of the image tile being rendered. Ex: `178`
 
-5. **level:** Zoom level
-    + **4**
-    + **8**
-    + **12**
+5.  **level:** Visualization output, zoom level
 
-
-### Summary 
+    -   **4**
+    -   **8**
+    -   **12**
 
 ### Shape
 
-```{r dim}
-dim(task-x-y)
+```{r }
+dim(task.x.y)
 ```
+
+### Summary
+
+This data contains 65793 observations with 5 columns. taskId and jobId columns are listed as a character type, and the rest of columns are numeric.
 
 ```{r,  echo=FALSE}
-summary(task-x-y)
+summary(task.x.y)
 ```
 
-
-
----
+------------------------------------------------------------------------
 
 ## Data Quality
 
 ### Missing Values
+
+Missing data can significantly affect our analysis. But when we check the 3 data sets, it is clear that there is no missing data.
 
 ```{r}
 sum(is.na(gpu))
 sum(is.na(application.checkpoints))
 sum(is.na(task.x.y))
 ```
-
-There is no missing data on the datasets.
-
 
 ### Duplicate Rows
 
@@ -153,8 +153,79 @@ nrow(application.checkpoints) - application.checkpoints %>% distinct() %>% nrow(
 nrow(task.x.y) - task.x.y %>% distinct() %>% nrow()
 ```
 
+There are 2.470 rows are duplicated in application.checkpoint data. We should consider in our analysis. In the gpu data frame , there are only 9 rows duplicated. However, task.x.y data frame does not contain duplicate rows.
 
-There are 2.470 rows are duplicated in application.checkpoint data. We should consider in our analysis. In gpu dataframe , there are only 9 rows duplicated. However, task.x.y dataframe does not contain duplicate rows.
+## Exploratory data analysis
+
+## Event Count
+
+According to the bar graph, event types are all equal which is 132080. There is no missing or extra record in the data.
+
+```{r}
+ggplot(application.checkpoints, aes(x = eventName, fill = eventName)) +
+    geom_bar() +
+      geom_text(stat='count', aes(label=..count..), position = position_dodge(width = 1),vjust = -0.5, size = 2)+ ggtitle("Event Count")
+```
+
+## Variable Distribution
+
+Looking at the graph below, the first thing to notice is that the GPU temperature is in a normal distribution. GPU utilization percentage is between 75 and 100, and also GPU usage drops below 10%.
+GPU usage may differ between event types. The power usage of the GPU is up to 200.
+
+```{r}
+gather(gpu, x, y, powerDrawWatt:gpuMemUtilPerc) %>%
+  ggplot(aes(x = y, fill=y, color=y)) +
+    geom_density(alpha=0.5) +
+    ggtitle("Variable Distribution")+
+    facet_wrap( ~ x, scales = "free", ncol = 3)
+```
+
+# Render Level
+
+As stated in the business understanding section, there are 3  render levels, and 65,793 tasks. The level that requires the most render is 12.
+
+```{r}
+
+ggplot(task.x.y, aes(x=level, fill=as.factor(level))) +
+    geom_bar() + ggtitle("Render Level")+
+  geom_text(stat='count', aes(label=..count..), position = position_dodge(width = 1),
+    vjust = -0.5, size = 2)+
+  theme_bw()
+```
+
+## GPU Unique Values 
+
+gpuSerial, hostname and gpuUUID have the same number of unique values. 
+
+```{r}
+print(paste0("Count of Unique gpuSerial Values: ", length(unique(gpu$gpuSerial))))
+print(paste0("Count of Unique hostname Values: ", length(unique(gpu$hostname))))
+print(paste0("Count of Unique gpuUUID Values: ", length(unique(gpu$gpuUUID))))
+
+```
 
 
+
+## Application Checkpoint Unique Values
+
+The number of tasks required to produce a terapixel image is 65793. According to the information below, there are 3 jobIds. These are unique values assigned by Azure for each render level.
+
+
+```{r}
+print(paste0("Count of Unique hostname Values: ", length(unique(application.checkpoints$hostname))))
+print(paste0("Count of Unique jobId Values: ", length(unique(application.checkpoints$jobId))))
+print(paste0("Count of Unique taskId Values: ", length(unique(application.checkpoints$taskId))))
+```
+
+
+## Records Count in Tasks
+
+5 events are required to render an image tile. And these events are expected to be 10 in total with start and end records. However, 20 records appear for some tasks. This indicates that some records are duplicates.
+
+```{r}
+application.checkpoints %>% group_by(taskId) %>% count() %>%
+  ggplot(aes(x = n, fill = n)) +
+  geom_bar() +
+  geom_text(stat='count', aes(label=..count..), position = position_dodge(width = 1),vjust = -0.5, size = 2)+ ggtitle("Records Count in Tasks ")
+```
 
