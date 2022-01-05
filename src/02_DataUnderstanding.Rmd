@@ -159,7 +159,7 @@ There are 2.470 rows are duplicated in application.checkpoint data. We should co
 
 ## Event Count
 
-According to the bar graph, event types are all equal which is 132080. There is no missing or extra record in the data.
+According to the bar graph, event types are all equal which is 132080. There is no missing or extra records in the data.
 
 ```{r}
 ggplot(application.checkpoints, aes(x = eventName, fill = eventName)) +
@@ -169,7 +169,7 @@ ggplot(application.checkpoints, aes(x = eventName, fill = eventName)) +
 
 ## Variable Distribution
 
-Looking at the graph below, the first thing to notice is that the GPU temperature is in a normal distribution. GPU utilization percentage is between 75 and 100, and also GPU usage drops below 10%.
+Looking at the graph below, the first thing to notice is that the GPU temperature is in a normal distribution. The mean of the temperature looks 40 Celcius. GPU utilization percentage is between 75 and 100, and also GPU usage drops below 10%.
 GPU usage may differ between event types. The power usage of the GPU is up to 200.
 
 ```{r}

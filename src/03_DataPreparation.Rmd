@@ -1,0 +1,86 @@
+---
+title: "03_DataPreparation"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir= normalizePath('..'))
+```
+
+# Data Preparation
+
+Data from the three files provided to us will be used to evaluate the supercomputer creation process.  In this part, we will covers all process to construct final data from raw data in order to prepare the data for further analysis.
+
+## Machine Unique ID
+
+There are 1024 virtual machines in total in the system, and all of the machines have a single GPU. In order to better understand the data and make visualization easier, we will assign a unique id called **machine_id** from 1 to 1024 for each machine.
+
+```{r}
+hostnames <- unique(gpu$hostname) 
+```
+
+```{r}
+find_index_hostname <- function(value){
+  return(which(hostnames == value))
+}
+```
+
+
+```{r}
+gpu$machine_id <- lapply(gpu$hostname, find_index_hostname)
+application.checkpoints$machine_id <- lapply(application.checkpoints$hostname,find_index_hostname)
+```
+
+
+
+## Delete duplicate rows
+
+As we stated in the data understanding part, 2,470 duplicates found  for **gpu** and 9 duplicates for **application.checkpoints**. These values will be deleted to avoid problems in the analysis.
+
+```{r}
+gpu <- gpu %>% distinct()
+application.checkpoints <- application.checkpoints %>% distinct()
+```
+
+## Merge Data
+
+Task.x.y data set merged into application.tasks.
+
+```{r}
+application.checkpoints <- merge(x = application.checkpoints, y = task.x.y, by =c("taskId","jobId"), all = TRUE)
+```
+
+
+## Convert Date Format
+
+
+In the data understanding section, it was mentioned that the "timestamp" column is of character type. To calculate elapsed time for event types, "timestamp" column should be in **POSIXct** type.
+
+```{r}
+application.checkpoints <- application.checkpoints %>% 
+  mutate(timestamp=as.POSIXct(timestamp,format="%Y-%m-%dT%H:%M:%OS"))
+gpu <- gpu %>% 
+  mutate(timestamp=as.POSIXct(timestamp,format="%Y-%m-%dT%H:%M:%OS")) 
+```
+
+
+
+
+## Calculate Elapsed Time
+
+There is no total elapsed time information for each activity in the data. But there are start and end times in **application.checkpoints**. Thus, this information can be obtained by finding the difference between this start and end time.  We will store the new data in the variable as **application.events**. Additionally, the elapsed time of each task was calculated and stored in a new data frame called **application.tasks**.
+
+
+```{r include=FALSE}
+source("src/elapsed_time.R")
+```
+
+
+
+
+
+
+
+
+
