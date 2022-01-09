@@ -50,7 +50,7 @@ application.events.without_tr %>% group_by(eventName) %>% summarise(percent = su
 
 We'll use **gpu** data and **application.tasks** to answer the question about the relationship between GPU temperature and GPU performance. Generally, the performance of a GPU is assessed by how well it renders an object. However, there is no information about the quality of the tile of image. Therefore, we'll assume every tile is equal and evaluate GPU performance in terms of render time.
 
-We have data about the render time for each tile. For each of these tiles, we will get the temperature values from the start and end time intervals of the tiles in the GPU data. Thus, we will obtain temperature data series for each render time. We'll look at the relationship between the elapsed time and GPU temperature during this process to see if GPU temperature has an impact on GPU performance. To investigate the correlation, we will use temperature values such as **mean,median, standard deviation, maximum, and minimum, coefficient of variance**.
+We have data about the render time for each tile. For each of these tiles, we will get the temperature values from the start and end time intervals of the tiles in the GPU data. Thus, we will obtain temperature data series for each render time. We'll look at the relationship between the elapsed time and GPU temperature during this process to see if GPU temperature has an impact on GPU performance. To investigate the correlation, we will use temperature values such as **mean,median, standard deviation, maximum, and minimum, coefficient of variation, quantiles**.
 
 First, the table that correlates the temperature data and the elapsed time of the tiles needs to be created.
 
@@ -59,12 +59,13 @@ First, the table that correlates the temperature data and the elapsed time of th
 source("src/associate_elapsed_time_with_gpu_values.R")
 ```
 
+
 ```{r}
-df_temp_cor <- cor(df_temp[, c("elapsed_time", "MEAN","MEDIAN","SD", "COV" ,"MAX","Q1","Q3")])
+df_temp_cor <- cor(df_temp[, c("elapsed_time", "MEAN","MEDIAN","SD", "COV" , "MIN","MAX","Q1","Q3")])
 df_temp_cor
 ```
 
-According to the correlation table, there does not appear to be a strong correlation between task duration and temperature attributes. Only the elapsed time has a positive correlation of 0.55 with the temperature standard deviation.
+According to the correlation table, there does not appear to be a strong correlation between task duration and temperature attributes,but the elapsed time has a positive correlation of 0.55 with the temperature standard deviation and coefficient of variation. It means that how much temperature values are spread out around the mean or average affect elapsed time.
 
 
 ```{r}
@@ -78,26 +79,22 @@ On the other hand, the performance and capacities of the 1024 GPU cards in the s
 ```{r}
 df_temp_cor <- df_temp %>%
   group_by(machine_id) %>%
-  summarize(cor_sd=cor(SD,elapsed_time),cor_cov=cor(COV,elapsed_time),cor_mean=cor(MEAN,elapsed_time), cor_median=cor(MEDIAN,elapsed_time),cor_max=cor(MAX,elapsed_time), cor_q1=cor(Q1,elapsed_time), cor_q2= cor(Q3,elapsed_time))
+  summarize(cor_sd=cor(SD,elapsed_time),cor_cov=cor(COV,elapsed_time),cor_mean=cor(MEAN,elapsed_time), cor_median=cor(MEDIAN,elapsed_time),cor_min=cor(MIN,elapsed_time),cor_max=cor(MAX,elapsed_time), cor_q1=cor(Q1,elapsed_time), cor_q3= cor(Q3,elapsed_time))
 
 ```
 
 
-```{r}
-gather(df_temp_cor, x, y, cor_sd:cor_q2) %>%
-  ggplot(aes(x = y,  color=x)) +
-    geom_boxplot() +
-    ggtitle("Variable Distribution")+
-    facet_wrap( ~ x, scales = "free", ncol = 2)
-```
 
 ```{r}
-gather(df_temp_cor, x, y, cor_sd:cor_q2) %>%
+gather(df_temp_cor, x, y, cor_sd:cor_q3) %>%
   ggplot(aes(x = y, color=x)) +
     geom_histogram() +
-    ggtitle("Temperature-Render Time Corelation by machine")+
+    ggtitle("Histogram of Temperature-Render Time Corelation by machine")+
     facet_wrap( ~ x, scales = "free", ncol = 2)
 ```
+
+According to the histogram above, the correlation coefficients between the elapsed time and the standard deviation of the temperature values spread approximately between 0 and 0.85. Peak coefficients range from about 0.6 to 0.75, and  the histogram is slightly skewed to the left. It can be said that there is a small positive correlation. This interpretation will also be same for the coefficient of variance. The 2 histograms are very similar to each other. Furthermore, there is some correlation between the maximum temperature and the elapsed time. Peak values appear above but,itis not a strong correlation. Looking at other metrics, it seems that the correlation coefficients are distributed over small values.
+
 
 ##  What is the interplay between increased power draw and render time?
 
@@ -105,33 +102,30 @@ To carry out this analysis, the methods performed in the previous stage will be 
 
 
 ```{r}
-df_power_cor <- cor(df_power[, c("elapsed_time", "MEAN","MEDIAN","SD", "COV" ,"MAX","Q1","Q3")])
+df_power_cor <- cor(df_power[, c("elapsed_time", "MEAN","MEDIAN","SD", "COV", "MIN","MAX","Q1","Q3")])
 df_power_cor
 ```
+
+According to the correlation table, many temperature statistics seem to have a correlation of more than 0.5 with elapsed time. These temperature statistical values are as follows; **mean, standart deviation, max, third quantile*. However, correlations are not strong.
 
 
 ```{r}
 corrplot(df_power_cor, type = "upper", tl.col = "black", tl.srt = 45)
 ```
 
+
+
+
 ```{r}
 df_power_cor <- df_power %>%
-  group_by(machine_id) %>%
-  summarize(cor_sd=cor(SD,elapsed_time),cor_cov=cor(COV,elapsed_time),cor_mean=cor(MEAN,elapsed_time), cor_median=cor(MEDIAN,elapsed_time),cor_max=cor(MAX,elapsed_time), cor_q1=cor(Q1,elapsed_time), cor_q2= cor(Q3,elapsed_time))
+  group_by(gpuID) %>%
+  summarize(cor_sd=cor(SD,elapsed_time),cor_cov=cor(COV,elapsed_time),cor_mean=cor(MEAN,elapsed_time), cor_median=cor(MEDIAN,elapsed_time),cor_min=cor(MIN,elapsed_time),cor_max=cor(MAX,elapsed_time), cor_q1=cor(Q1,elapsed_time), cor_q3= cor(Q3,elapsed_time))
 ```
 
 
-```{r}
-gather(df_power_cor, x, y, cor_sd:cor_q2) %>%
-  ggplot(aes(x = y,  color=x)) +
-    geom_boxplot() +
-    ggtitle("Power- Render Time Corelation Distribution")+
-    facet_wrap( ~ x, scales = "free", ncol = 2)
-```
-
 
 ```{r}
-gather(df_temp_cor, x, y, cor_sd:cor_q2) %>%
+gather(df_power_cor, x, y, cor_sd:cor_q3) %>%
   ggplot(aes(x = y, color=x)) +
     geom_histogram() +
     ggtitle("Power -Render Time Corelation by machine")+
@@ -139,67 +133,76 @@ gather(df_temp_cor, x, y, cor_sd:cor_q2) %>%
 ```
 
 
-
 ## Can we quantify the variation in computation requirements for particular tiles?
 
-
-
-```{r ,echo= FALSE , fig.height=4, fig.width=6}
-ggplot(df_temp, aes(x= elapsed_time, y= mean_temp)) +geom_h() + ggtitle("GPU Temperature vs Task Duration Graph") + theme(plot.title = element_text(hjust = 0.5)) 
-```
-
-
-
-```{r}
- pca_arr=prcomp(df_sumarise[,2:6])
- plot(pca_arr,type="l",main="")
-title(xlab="Component number")
-pca_df <- as.data.frame(pca_arr$x)
-ggplot(data = pca_df, aes(x = PC1, y = PC2)) +
-    geom_point(size = 2, alpha = 0.6) +
-    labs(color = "", fill = "") +
-    ggtitle("Principal Component Analysis")
-```
-
-
-```{r}
- pca_arr=prcomp(df_temp[,c("median_temp","first_qu","mean_temp","sd_temp","max_temp", "cov_temp")])
- plot(pca_arr,type="l",main="")
-```
-
-
-```{r}
-library("ggpubr")
-ggscatter(df_temp, x = "cov_temp", y = "elapsed_time", 
-          add = "reg.line", conf.int = TRUE, 
-          cor.coef = TRUE, cor.method = "pearson",
-          xlab = "Max temp", ylab = "elapsed time")
-```
-
-```{r}
-cor(df_sumarise$cov_temp, df_sumarise$elapsed_time, method = "pearson", use = "complete.obs")
-```
-
-```{r}
-plot(df_sumarise$mean_temp, df_sumarise$elapsed_time)
-```
-
-
-
-
-
-
-
-```{r}
-ggplot(gpu1, aes(x=timestamp, y=powerDrawWatt)) +
-  geom_line() + 
-  xlab("")
-```
-
-
-
+gpu power, utilization, memory util, render time
 ```{r}
 ## gpu seçerek bir şeyler oluşturulabilir dashboard
-ggplot(application.tasks %>% filter(level == 12), aes(x= x, y = y,color=elapsed_time)) +  geom_point()  + theme_classic()
+ggplot(df_temp %>% filter(level == 12), aes(x= x, y = y, color=MEAN)) +  geom_point()  + theme_classic()
 ```
+
+
+## Can we identify particular GPU cards whose performance differs to other cards?
+
+ortalama elapsed time'ı bul kıyasla , box plot ? cluster ?
+
+```{r}
+application.tasks$gpuID <- as.numeric(substr(application.tasks$gpuSerial, 1, 4)) 
+unique(application.tasks$gpuID)
+```
+
+```{r}
+machine_performance <- application.tasks %>% filter(level == 12) %>% group_by(hostname) %>%  summarize(mean_elapsed_time = mean(elapsed_time))
+```
+
+
+
+
+
+```{r}
+ggplot(df_power, aes(gpuSerial, elapsed_time)) + geom_point()
+```
+
+
+
+```{r}
+hist(machine_performance$mean_elapsed_time)
+```
+
+
+
+```{r}
+ggplot(machine_performance)
+```
+
+```{r}
+hist(gpu$gpuSerial)
+```
+
+
+## What can we learn about the efficiency of the task scheduling process?
+
+To measure the efficiency of task scheduling, we need to calculate how much delay there is in scheduling for each machine. We will use the **application.tasks** dataset to calculate this. We will create a new data frame, and calculate difference the start of the first render time and the end of the last one for each machine. It will be called the **expected time**. Then, we will sum the total duration of the tasks for each machine. The difference between these 2 calculations will  give the machine's total **delay time**.
+
+
+```{r}
+source("src/calculate_delay.R")
+```
+
+
+```{r}
+summary(machine_schedule_time$delay_time)
+```
+
+```{r}
+hist(machine_schedule_time$delay_time, main="Delay Time Histogram")
+```
+
+According to summary, the delay time of machines in the task scheduling process ranges from **125.5 seconds** to **178.8 seconds**. The average time lost is **151.1 seconds**. The 3 machines with the most delays are as follows.
+
+```{r}
+machine_schedule_time %>% arrange(desc(delay_time)) %>% head(3)
+```
+
+
 

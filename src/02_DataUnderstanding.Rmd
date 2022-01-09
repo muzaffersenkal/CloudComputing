@@ -229,3 +229,18 @@ application.checkpoints %>% group_by(taskId) %>% count() %>%
   geom_text(stat='count', aes(label=..count..), position = position_dodge(width = 1),vjust = -0.5, size = 2)+ ggtitle("Records Count in Tasks ")
 ```
 
+## GPU Serial
+
+
+There is no information about the models of the graphics cards on the data. But the GPU serial numbers contain the manufacturing information of cards.  For example:
+
+
+**Serial no:** 07SB1609001016
+**Description:** Within the serial number after the letter B, the 16 represents the year and the 09 represents the month of manufacture. In this example, this VGA card was manufactured on September 2016.
+(this example is taken from MSI's site; https://us.msi.com/page/warranty/vga)
+
+```{r}
+plot(unique(gpu$gpuSerial), main="GPU serial numbers")
+```
+
+It is clear that there is a pattern in serial numbers. We can distinguish the types of GPU cards from these numbers.

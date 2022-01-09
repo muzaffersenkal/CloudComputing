@@ -7,12 +7,20 @@ for(i in 1:1024){
   gpu1 <- gpu  %>% filter(machine_id == i)
   gpu1_task <- application.tasks %>%  filter(machine_id == i) 
   for(row in 1:nrow(gpu1_task)){
-    
+    ## find gpu values between start time and endtime
     findGpu <- gpu1 %>% filter(timestamp >= gpu1_task[row, "start_time"][[1]]) %>%  filter(timestamp <= gpu1_task[row, "timestamp"][[1]]) 
     temp_summary = summary(findGpu$gpuTempC)
     power_summary = summary(findGpu$powerDrawWatt)
+    
+    
+    ## adding to new dataframe
     task_summary_temp <- data.frame(taskId=gpu1_task[row, "taskId"],
                                     jobId=gpu1_task[row, "jobId"],
+                                    hostname=gpu1[1,"hostname"],
+                                    gpuSerial=gpu1[1,"gpuSerial"],
+                                    level=gpu1_task[row, "level"],
+                                    x=gpu1_task[row, "x"],
+                                    y=gpu1_task[row, "y"],
                                     elapsed_time=gpu1_task[row, "elapsed_time"],
                                     Q1=temp_summary["1st Qu."][[1]],
                                     Q3=temp_summary["3rd Qu."][[1]],
@@ -26,6 +34,11 @@ for(i in 1:1024){
     
     task_summary_power <- data.frame(taskId=gpu1_task[row, "taskId"],
                                      jobId=gpu1_task[row, "jobId"],
+                                     hostname=gpu1[1,"hostname"],
+                                     gpuSerial=gpu1[1,"gpuSerial"],
+                                     level=gpu1_task[row, "level"],
+                                     x=gpu1_task[row, "x"],
+                                     y=gpu1_task[row, "y"],
                                      elapsed_time=gpu1_task[row, "elapsed_time"],
                                      Q1=power_summary["1st Qu."][[1]],
                                      Q3=power_summary["3rd Qu."][[1]],

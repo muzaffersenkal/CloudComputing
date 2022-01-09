@@ -4,7 +4,7 @@ application.events <- application.checkpoints %>%
   arrange(timestamp, taskId,eventName) %>%
   group_by(taskId, eventName) %>%
   mutate(elapsed_time = abs(as.numeric(timestamp)- as.numeric(lag(timestamp)))) %>%
-  filter(elapsed_time != "" )
+  filter(elapsed_time != "" ) %>%  mutate(start_time = timestamp - elapsed_time)
 
 
 ## Calculation of elapsed time for tasks
