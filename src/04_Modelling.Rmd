@@ -1,0 +1,205 @@
+---
+title: "04_Modelling"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir= normalizePath('..'))
+```
+
+# Modelling and Data Analysis
+
+Analyses of the data that we have obtained and processed will be conducted in order to achieve the aim and answer the questions raised in the previous section of the report. The analysis would be organised according to the order of the questions listed in the report's Business Objective section.
+
+
+## Which event types dominate task run times?
+
+Application.events data will be used to determine which event is dominating the task run time. In the data preparation step, the time taken for each activity was calculated, and assigned to a variable called **application.events**. A box plot and density plot would be plotted to demonstrate the spread and mean of each event name duration to answer the question of which event dominates the event run time. In addition, these graphics will be grouped according to the level of visualization. Because the render time of each level can be different.
+
+
+### Density Plot
+```{r}
+  ggplot(application.events, aes(x = elapsed_time, color = as.factor(level), fill = as.factor(level))) +
+    geom_density(alpha=0.5) +
+    ggtitle("Distribution of Events Density Plot")+
+    facet_wrap( ~ eventName, scales = "free", ncol = 3)
+```
+### Box Plot
+
+```{r}
+  ggplot(application.events, aes(x = elapsed_time, color = as.factor(level), fill = as.factor(level))) +
+    geom_boxplot(alpha=0.5) +
+    ggtitle("Distribution of Events Density  Box Plot")+
+    facet_wrap( ~ eventName, scales = "free", ncol = 3)
+```
+The **Total Render** event should be excluded as it represents the entire task run time. Therefore, it is evident from the graphs above that the **Render** event type dominates the event execution time. In general, regardless of the visualization level, when the running times of the activities are compared, the Render event covers **94.5%** of the total time while producing the terapixel image.
+
+
+```{r}
+application.events.without_tr  <- application.events %>% filter(eventName != "TotalRender")
+entire_duration <- sum(application.events.without_tr$elapsed_time)
+```
+
+```{r}
+application.events.without_tr %>% group_by(eventName) %>% summarise(percent = sum(elapsed_time)/entire_duration*100)
+```
+
+
+## What is the interplay between GPU temperature and performance?
+
+We'll use **gpu** data and **application.tasks** to answer the question about the relationship between GPU temperature and GPU performance. Generally, the performance of a GPU is assessed by how well it renders an object. However, there is no information about the quality of the tile of image. Therefore, we'll assume every tile is equal and evaluate GPU performance in terms of render time.
+
+We have data about the render time for each tile. For each of these tiles, we will get the temperature values from the start and end time intervals of the tiles in the GPU data. Thus, we will obtain temperature data series for each render time. We'll look at the relationship between the elapsed time and GPU temperature during this process to see if GPU temperature has an impact on GPU performance. To investigate the correlation, we will use temperature values such as **mean,median, standard deviation, maximum, and minimum, coefficient of variance**.
+
+First, the table that correlates the temperature data and the elapsed time of the tiles needs to be created.
+
+
+```{r}
+source("src/associate_elapsed_time_with_gpu_values.R")
+```
+
+```{r}
+df_temp_cor <- cor(df_temp[, c("elapsed_time", "MEAN","MEDIAN","SD", "COV" ,"MAX","Q1","Q3")])
+df_temp_cor
+```
+
+According to the correlation table, there does not appear to be a strong correlation between task duration and temperature attributes. Only the elapsed time has a positive correlation of 0.55 with the temperature standard deviation.
+
+
+```{r}
+corrplot(df_temp_cor, type = "upper", tl.col = "black", tl.srt = 45)
+```
+
+
+On the other hand, the performance and capacities of the 1024 GPU cards in the system may differ. Collective evaluation can be misleading. Therefore, a comparison between temperature and  performance should be made per GPU.    
+
+
+```{r}
+df_temp_cor <- df_temp %>%
+  group_by(machine_id) %>%
+  summarize(cor_sd=cor(SD,elapsed_time),cor_cov=cor(COV,elapsed_time),cor_mean=cor(MEAN,elapsed_time), cor_median=cor(MEDIAN,elapsed_time),cor_max=cor(MAX,elapsed_time), cor_q1=cor(Q1,elapsed_time), cor_q2= cor(Q3,elapsed_time))
+
+```
+
+
+```{r}
+gather(df_temp_cor, x, y, cor_sd:cor_q2) %>%
+  ggplot(aes(x = y,  color=x)) +
+    geom_boxplot() +
+    ggtitle("Variable Distribution")+
+    facet_wrap( ~ x, scales = "free", ncol = 2)
+```
+
+```{r}
+gather(df_temp_cor, x, y, cor_sd:cor_q2) %>%
+  ggplot(aes(x = y, color=x)) +
+    geom_histogram() +
+    ggtitle("Temperature-Render Time Corelation by machine")+
+    facet_wrap( ~ x, scales = "free", ncol = 2)
+```
+
+##  What is the interplay between increased power draw and render time?
+
+To carry out this analysis, the methods performed in the previous stage will be followed. The correlation between the data in the **Power Draw** column in the GPU data and the elapsed time will be examined. 
+
+
+```{r}
+df_power_cor <- cor(df_power[, c("elapsed_time", "MEAN","MEDIAN","SD", "COV" ,"MAX","Q1","Q3")])
+df_power_cor
+```
+
+
+```{r}
+corrplot(df_power_cor, type = "upper", tl.col = "black", tl.srt = 45)
+```
+
+```{r}
+df_power_cor <- df_power %>%
+  group_by(machine_id) %>%
+  summarize(cor_sd=cor(SD,elapsed_time),cor_cov=cor(COV,elapsed_time),cor_mean=cor(MEAN,elapsed_time), cor_median=cor(MEDIAN,elapsed_time),cor_max=cor(MAX,elapsed_time), cor_q1=cor(Q1,elapsed_time), cor_q2= cor(Q3,elapsed_time))
+```
+
+
+```{r}
+gather(df_power_cor, x, y, cor_sd:cor_q2) %>%
+  ggplot(aes(x = y,  color=x)) +
+    geom_boxplot() +
+    ggtitle("Power- Render Time Corelation Distribution")+
+    facet_wrap( ~ x, scales = "free", ncol = 2)
+```
+
+
+```{r}
+gather(df_temp_cor, x, y, cor_sd:cor_q2) %>%
+  ggplot(aes(x = y, color=x)) +
+    geom_histogram() +
+    ggtitle("Power -Render Time Corelation by machine")+
+    facet_wrap( ~ x, scales = "free", ncol = 2)
+```
+
+
+
+## Can we quantify the variation in computation requirements for particular tiles?
+
+
+
+```{r ,echo= FALSE , fig.height=4, fig.width=6}
+ggplot(df_temp, aes(x= elapsed_time, y= mean_temp)) +geom_h() + ggtitle("GPU Temperature vs Task Duration Graph") + theme(plot.title = element_text(hjust = 0.5)) 
+```
+
+
+
+```{r}
+ pca_arr=prcomp(df_sumarise[,2:6])
+ plot(pca_arr,type="l",main="")
+title(xlab="Component number")
+pca_df <- as.data.frame(pca_arr$x)
+ggplot(data = pca_df, aes(x = PC1, y = PC2)) +
+    geom_point(size = 2, alpha = 0.6) +
+    labs(color = "", fill = "") +
+    ggtitle("Principal Component Analysis")
+```
+
+
+```{r}
+ pca_arr=prcomp(df_temp[,c("median_temp","first_qu","mean_temp","sd_temp","max_temp", "cov_temp")])
+ plot(pca_arr,type="l",main="")
+```
+
+
+```{r}
+library("ggpubr")
+ggscatter(df_temp, x = "cov_temp", y = "elapsed_time", 
+          add = "reg.line", conf.int = TRUE, 
+          cor.coef = TRUE, cor.method = "pearson",
+          xlab = "Max temp", ylab = "elapsed time")
+```
+
+```{r}
+cor(df_sumarise$cov_temp, df_sumarise$elapsed_time, method = "pearson", use = "complete.obs")
+```
+
+```{r}
+plot(df_sumarise$mean_temp, df_sumarise$elapsed_time)
+```
+
+
+
+
+
+
+
+```{r}
+ggplot(gpu1, aes(x=timestamp, y=powerDrawWatt)) +
+  geom_line() + 
+  xlab("")
+```
+
+
+
+```{r}
+## gpu seçerek bir şeyler oluşturulabilir dashboard
+ggplot(application.tasks %>% filter(level == 12), aes(x= x, y = y,color=elapsed_time)) +  geom_point()  + theme_classic()
+```
+

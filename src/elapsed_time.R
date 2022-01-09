@@ -9,3 +9,4 @@ application.events <- application.checkpoints %>%
 
 ## Calculation of elapsed time for tasks
 application.tasks <- application.events %>% filter(eventName == "TotalRender")
+

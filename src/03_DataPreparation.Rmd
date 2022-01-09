@@ -76,7 +76,9 @@ There is no total elapsed time information for each activity in the data. But th
 source("src/elapsed_time.R")
 ```
 
-
+```{r}
+application.tasks <- application.tasks %>%  mutate(start_time = timestamp - elapsed_time)
+```
 
 
 
