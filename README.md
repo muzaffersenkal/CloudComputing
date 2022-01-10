@@ -51,8 +51,16 @@ This is an example of how to list things you need to use the software and how to
     library('ProjectTemplate')
     load.project()
     ```
+    
+### Dasboard
 
-## Usage
+1.  Run App
+
+    ``` sh
+    runApp('dashboard.R')
+    ```
+
+## Structure
 
 After you enter the second line of code, you'll see a series of automated messages as ProjectTemplate goes about doing its work. This work involves:
 

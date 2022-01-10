@@ -161,6 +161,7 @@ Each tile has different rendering costs in the production of terapixel image. Be
 ```
 
 
+
 The following heatmaps show the relative impact of rendering each pixel in terms of a given average GPU metrics, time and power. Dark colors indicate low values of the metric, and light colors indicate large values of the metric.
 
 It is clear that the visual legend in the upper left corner of the terapixel image was rendered in a short time using less power. Likewise, the lake at Leazes Park and the structures on the university campus were built with low power and processed quickly. Moreover, buildings and roads are distinguished on the heatmap,because there is difference between the computations required to render streets and buildings. In addition, the initial values of the x-axis seem to be quite intense in the gpu heatmaps, but the elapsed time is quite high. At the beginning of the process, it can be concluded that the system does not work efficiently.

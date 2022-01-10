@@ -1,0 +1,14 @@
+---
+title: "06_Deployment"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir= normalizePath('..'))
+```
+
+# Deployment
+
+ It doesn't matter how brilliant your findings are, or how precisely your models match the data, if you don't apply them to enhance the way you do business in this last step of the Cross-Industry Standard Process for Data Mining (CRISP-DM) process. As a result, a dashboard was created to view and filter GPU data on tiles. 
+This interface has been developed with the **shiny** dashboard library.
