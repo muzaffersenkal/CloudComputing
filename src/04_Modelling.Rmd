@@ -41,6 +41,8 @@ application.events.without_tr  <- application.events %>% filter(eventName != "To
 entire_duration <- sum(application.events.without_tr$elapsed_time)
 ```
 
+
+
 ```{r}
 application.events.without_tr %>% group_by(eventName) %>% summarise(percent = sum(elapsed_time)/entire_duration*100)
 ```
@@ -93,7 +95,7 @@ gather(df_temp_cor, x, y, cor_sd:cor_q3) %>%
     facet_wrap( ~ x, scales = "free", ncol = 2)
 ```
 
-According to the histogram above, the correlation coefficients between the elapsed time and the standard deviation of the temperature values spread approximately between 0 and 0.85. Peak coefficients range from about 0.6 to 0.75, and  the histogram is slightly skewed to the left. It can be said that there is a small positive correlation. This interpretation will also be same for the coefficient of variance. The 2 histograms are very similar to each other. Furthermore, there is some correlation between the maximum temperature and the elapsed time. Peak values appear above but,itis not a strong correlation. Looking at other metrics, it seems that the correlation coefficients are distributed over small values.
+According to the histogram above, the correlation coefficients between the elapsed time and the standard deviation of the temperature values spread approximately between 0 and 0.85. Peak coefficients range from about 0.6 to 0.75, and  the histogram is slightly skewed to the left. It can be said that there is a small positive correlation. This interpretation will also be same for the coefficient of variance. The 2 histograms are very similar to each other. Furthermore, there is some correlation between the maximum temperature and the elapsed time. Peak values appear above but,t is not a strong correlation. Looking at other metrics, it seems that the correlation coefficients are distributed over small values.
 
 
 ## What is the interplay between increased power draw and render time?
@@ -128,7 +130,7 @@ df_power_cor <- df_power %>%
 gather(df_power_cor, x, y, cor_sd:cor_q3) %>%
   ggplot(aes(x = y, color=x)) +
     geom_histogram() +
-    ggtitle("Power -Render Time Corelation by machine")+
+    ggtitle("Power - Render Time Corelation by machine")+
     facet_wrap( ~ x, scales = "free", ncol = 2)
 ```
 
@@ -193,9 +195,13 @@ unique(df_power$gpuID)
 ```
 
 
-
 ```{r}
 df_elapsed_time_gpu <- df_power %>% group_by(gpuID) %>% summarize(avg_elapsed = mean(elapsed_time)) 
+df_elapsed_time_gpu
+```
+
+```{r}
+
 
 gpu_diff_1 <- ggplot(df_elapsed_time_gpu, aes(x=as.factor(gpuID), y=avg_elapsed,  fill=avg_elapsed)) +
     geom_bar(stat = "identity") + ggtitle("GPU Model") + scale_fill_gradient(name = "avg time") + 
@@ -207,11 +213,13 @@ gpu_diff_2 <-ggplot(df_power, aes(x=elapsed_time, group=gpuID, fill=as.factor(gp
 ```
 
 
-Box chart and bar graph were created to measure the performance of this 12 GPU card model. It was previously stated that the performance metric will be used as the render time. According to the charts below, the performances of the graphics cards are close to each other. However, it is clear that the performance of GPU cards starting with 3241 and 3243 is lower than the others.
+
+Box chart and bar graph were created to measure the performance of this 12 GPU card model. It was previously stated that the performance metric will be used as the render time. According to the charts below, the performances of the graphics cards are close to each other. However, it is clear that GPU cards with serial numbers beginning with 3236 perform the best, while GPU cards with serial numbers beginning with 3241 and 3243 perform the poorest.
 
 ```{r, warning=FALSE}
 ggarrange(gpu_diff_1, gpu_diff_2,ncol = 2, nrow = 1)
 ```
+
 
 
 
