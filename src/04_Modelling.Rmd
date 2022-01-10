@@ -8,7 +8,7 @@ knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_knit$set(root.dir= normalizePath('..'))
 ```
 
-# Modelling and Data Analysis
+# Modelling
 
 Analyses of the data that we have obtained and processed will be conducted in order to achieve the aim and answer the questions raised in the previous section of the report. The analysis would be organised according to the order of the questions listed in the report's Business Objective section.
 
@@ -65,7 +65,7 @@ df_temp_cor <- cor(df_temp[, c("elapsed_time", "MEAN","MEDIAN","SD", "COV" , "MI
 df_temp_cor
 ```
 
-According to the correlation table, there does not appear to be a strong correlation between task duration and temperature attributes,but the elapsed time has a positive correlation of 0.55 with the temperature standard deviation and coefficient of variation. It means that how much temperature values are spread out around the mean or average affect elapsed time.
+According to the correlation table, there does not appear to be a strong correlation between task duration and temperature attributes,but the elapsed time has a positive correlation of **0.56** with the temperature standard deviation and coefficient of variation. It means that how much temperature values are spread out around the mean or average affect elapsed time.
 
 
 ```{r}
@@ -96,7 +96,7 @@ gather(df_temp_cor, x, y, cor_sd:cor_q3) %>%
 According to the histogram above, the correlation coefficients between the elapsed time and the standard deviation of the temperature values spread approximately between 0 and 0.85. Peak coefficients range from about 0.6 to 0.75, and  the histogram is slightly skewed to the left. It can be said that there is a small positive correlation. This interpretation will also be same for the coefficient of variance. The 2 histograms are very similar to each other. Furthermore, there is some correlation between the maximum temperature and the elapsed time. Peak values appear above but,itis not a strong correlation. Looking at other metrics, it seems that the correlation coefficients are distributed over small values.
 
 
-##  What is the interplay between increased power draw and render time?
+## What is the interplay between increased power draw and render time?
 
 To carry out this analysis, the methods performed in the previous stage will be followed. The correlation between the data in the **Power Draw** column in the GPU data and the elapsed time will be examined. 
 
@@ -118,7 +118,7 @@ corrplot(df_power_cor, type = "upper", tl.col = "black", tl.srt = 45)
 
 ```{r}
 df_power_cor <- df_power %>%
-  group_by(gpuID) %>%
+  group_by(machine_id) %>%
   summarize(cor_sd=cor(SD,elapsed_time),cor_cov=cor(COV,elapsed_time),cor_mean=cor(MEAN,elapsed_time), cor_median=cor(MEDIAN,elapsed_time),cor_min=cor(MIN,elapsed_time),cor_max=cor(MAX,elapsed_time), cor_q1=cor(Q1,elapsed_time), cor_q3= cor(Q3,elapsed_time))
 ```
 
@@ -132,57 +132,92 @@ gather(df_power_cor, x, y, cor_sd:cor_q3) %>%
     facet_wrap( ~ x, scales = "free", ncol = 2)
 ```
 
+According to the histogram above, the correlation coefficients between the elapsed time and the standard deviation of the power draw peak values spread approximately between 0.60 and 0.725, and slightly skewed to the left. The correlation coefficients of the maximum and median values also seem to be quite high. It seems that there is a positive correlation between performance and performance in the third quarter.
+
+
+
+
 
 ## Can we quantify the variation in computation requirements for particular tiles?
 
-gpu power, utilization, memory util, render time
+Each tile has different rendering costs in the production of terapixel image. Because each tile contains different information from each other. These complexities affect the processing time and resources required to create the tile. To perform this analysis, we will show the * *average gpu usage, power usage, gpu memory usage and elapsed time** required for each pixel on a heatmap.
+
+
 ```{r}
-## gpu seçerek bir şeyler oluşturulabilir dashboard
-ggplot(df_temp %>% filter(level == 12), aes(x= x, y = y, color=MEAN)) +  geom_point()  + theme_classic()
+
+ tiles_power <- ggplot(df_power, aes(x= y, y = 255- x, color=MEAN)) +  geom_tile()  + scale_colour_gradient(
+  low = "#1d2671",high = "#dddddd") + ggtitle("Power usage on tiles") + theme(axis.title.x = element_blank(), axis.title.y = element_blank()) 
+
+ tiles_gpu_util <- ggplot(df_gpu_util, aes(x= y, y = 255- x, color=MEAN)) +  geom_tile()  + scale_colour_gradient(
+  low = "#1d2671",high = "#dddddd") + ggtitle("Gpu Utilization on tiles") + theme(axis.title.x = element_blank(), axis.title.y = element_blank()) 
+ 
+  tiles_gpu_memory_util <- ggplot(df_gpu_memory_util, aes(x= y, y = 255- x, color=MEAN)) +  geom_tile()  + scale_colour_gradient(low = "#1d2671",high = "#dddddd") + ggtitle("Gpu Memory Utilization on tiles") + theme(axis.title.x = element_blank(), axis.title.y = element_blank()) 
+  
+  tiles_elapsed_time <- ggplot(df_temp, aes(x= y, y = 255- x, color=elapsed_time)) +  geom_tile()  + scale_colour_gradient(low = "#1d2671",high = "#dddddd") + ggtitle("Elapsed Time on tiles") + theme(axis.title.x = element_blank(), axis.title.y = element_blank()) 
+  
+
 ```
+
+
+The following heatmaps show the relative impact of rendering each pixel in terms of a given average GPU metrics, time and power. Dark colors indicate low values of the metric, and light colors indicate large values of the metric.
+
+It is clear that the visual legend in the upper left corner of the terapixel image was rendered in a short time using less power. Likewise, the lake at Leazes Park and the structures on the university campus were built with low power and processed quickly. Moreover, buildings and roads are distinguished on the heatmap,because there is difference between the computations required to render streets and buildings. In addition, the initial values of the x-axis seem to be quite intense in the gpu heatmaps, but the elapsed time is quite high. At the beginning of the process, it can be concluded that the system does not work efficiently.
+
+
+```{r}
+ggarrange(tiles_power, tiles_gpu_util, tiles_gpu_memory_util, tiles_elapsed_time, 
+          labels = c("1", "2", "3", "4"), 
+          ncol = 2, nrow = 2)
+```
+
+
 
 
 ## Can we identify particular GPU cards whose performance differs to other cards?
 
-ortalama elapsed time'ı bul kıyasla , box plot ? cluster ?
+In the data understanding step, we inferred that there might be a pattern in the gpu serial numbers. 
+Unfortunately, we do not have any information about the capabilities of GPU cards. According to the plot below, it is estimated that there are 12 GPU models.
 
 ```{r}
-application.tasks$gpuID <- as.numeric(substr(application.tasks$gpuSerial, 1, 4)) 
-unique(application.tasks$gpuID)
-```
-
-```{r}
-machine_performance <- application.tasks %>% filter(level == 12) %>% group_by(hostname) %>%  summarize(mean_elapsed_time = mean(elapsed_time))
-```
-
-
-
-
-
-```{r}
-ggplot(df_power, aes(gpuSerial, elapsed_time)) + geom_point()
+ggplot(df_power, aes(x=gpuSerial, y=elapsed_time)) +
+    geom_point() + ggtitle("GPU Performances by Gpu Serial")+
+  theme_bw()
 ```
 
 
+We can divide these serial numbers into 12 according to their first 4 digits. 
 
 ```{r}
-hist(machine_performance$mean_elapsed_time)
+df_power$gpuID <- as.numeric(substr(df_power$gpuSerial, 1, 4)) 
+unique(df_power$gpuID)
 ```
 
 
 
 ```{r}
-ggplot(machine_performance)
+df_elapsed_time_gpu <- df_power %>% group_by(gpuID) %>% summarize(avg_elapsed = mean(elapsed_time)) 
+
+gpu_diff_1 <- ggplot(df_elapsed_time_gpu, aes(x=as.factor(gpuID), y=avg_elapsed,  fill=avg_elapsed)) +
+    geom_bar(stat = "identity") + ggtitle("GPU Model") + scale_fill_gradient(name = "avg time") + 
+  theme_bw() + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) 
+
+gpu_diff_2 <-ggplot(df_power, aes(x=elapsed_time, group=gpuID, fill=as.factor(gpuID))) +
+    geom_boxplot() + ggtitle("GPU Model")+  guides(fill=guide_legend(title="gpu id ")) + 
+  theme_bw()
 ```
 
-```{r}
-hist(gpu$gpuSerial)
+
+Box chart and bar graph were created to measure the performance of this 12 GPU card model. It was previously stated that the performance metric will be used as the render time. According to the charts below, the performances of the graphics cards are close to each other. However, it is clear that the performance of GPU cards starting with 3241 and 3243 is lower than the others.
+
+```{r, warning=FALSE}
+ggarrange(gpu_diff_1, gpu_diff_2,ncol = 2, nrow = 1)
 ```
+
 
 
 ## What can we learn about the efficiency of the task scheduling process?
 
-To measure the efficiency of task scheduling, we need to calculate how much delay there is in scheduling for each machine. We will use the **application.tasks** dataset to calculate this. We will create a new data frame, and calculate difference the start of the first render time and the end of the last one for each machine. It will be called the **expected time**. Then, we will sum the total duration of the tasks for each machine. The difference between these 2 calculations will  give the machine's total **delay time**.
+To measure the efficiency of task scheduling, we need to calculate how much delay there is in scheduling for each machine. We will use the **application.tasks** data set to calculate this. We will create a new data frame, and calculate difference the start of the first render time and the end of the last one for each machine. It will be called the **expected time**. Then, we will sum the total duration of the tasks for each machine. The difference between these 2 calculations will  give the machine's total **delay time**.
 
 
 ```{r}
