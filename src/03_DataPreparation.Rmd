@@ -45,7 +45,7 @@ application.checkpoints <- application.checkpoints %>% distinct()
 
 ## Merge Data
 
-Task.x.y data set merged into application.tasks.
+In the next steps, we will need to analyze the x and or coordinates of the therapeutic image. For this reason, Task.x.y data set merged into application.tasks.
 
 ```{r}
 application.checkpoints <- merge(x = application.checkpoints, y = task.x.y, by =c("taskId","jobId"), all = TRUE)

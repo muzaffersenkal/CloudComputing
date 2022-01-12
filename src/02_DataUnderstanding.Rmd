@@ -8,6 +8,7 @@ knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_knit$set(root.dir= normalizePath('..'))
 ```
 
+
 ```{r, echo=FALSE,warning=FALSE,message=FALSE,error=FALSE, results='hide'}
 library(ProjectTemplate)
 load.project()
@@ -157,17 +158,22 @@ There are 2.470 rows are duplicated in application.checkpoint data. We should co
 
 ## Exploratory data analysis
 
-## Event Count
+### Event Count
 
 According to the bar graph, event types are all equal which is 132080. There is no missing or extra records in the data.
+
+
 
 ```{r}
 ggplot(application.checkpoints, aes(x = eventName, fill = eventName)) +
     geom_bar() +
       geom_text(stat='count', aes(label=..count..), position = position_dodge(width = 1),vjust = -0.5, size = 2)+ ggtitle("Event Count")
+
+ggsave(file.path('graphs', 'event_count.png'))
 ```
 
-## Variable Distribution
+
+### Variable Distribution
 
 Looking at the graph below, the first thing to notice is that the GPU temperature is in a normal distribution. The mean of the temperature looks 40 Celcius. GPU utilization percentage is between 75 and 100, and also GPU usage drops below 10%.
 GPU usage may differ between event types. The power usage of the GPU is up to 200.
@@ -178,9 +184,12 @@ gather(gpu, x, y, powerDrawWatt:gpuMemUtilPerc) %>%
     geom_density(alpha=0.5) +
     ggtitle("Variable Distribution")+
     facet_wrap( ~ x, scales = "free", ncol = 3)
+ggsave(file.path('graphs', 'gpu_variable_dist.png'))
 ```
 
-# Render Level
+
+
+### Render Level
 
 As stated in the business understanding section, there are 3  render levels, and 65,793 tasks. The level that requires the most render is 12.
 
@@ -191,9 +200,11 @@ ggplot(task.x.y, aes(x=level, fill=as.factor(level))) +
   geom_text(stat='count', aes(label=..count..), position = position_dodge(width = 1),
     vjust = -0.5, size = 2)+
   theme_bw()
+ggsave(file.path('graphs', 'render_level_bar.png'))
 ```
 
-## GPU Unique Values 
+
+### GPU Unique Values 
 
 gpuSerial, hostname and gpuUUID have the same number of unique values. 
 
@@ -206,7 +217,7 @@ print(paste0("Count of Unique gpuUUID Values: ", length(unique(gpu$gpuUUID))))
 
 
 
-## Application Checkpoint Unique Values
+### Application Checkpoint Unique Values
 
 The number of tasks required to produce a terapixel image is 65793. According to the information below, there are 3 jobIds. These are unique values assigned by Azure for each render level.
 
@@ -218,7 +229,8 @@ print(paste0("Count of Unique taskId Values: ", length(unique(application.checkp
 ```
 
 
-## Records Count in Tasks
+
+### Records Count in Tasks
 
 5 events are required to render an image tile. And these events are expected to be 10 in total with start and end records. However, 20 records appear for some tasks. This indicates that some records are duplicates.
 
@@ -227,9 +239,14 @@ application.checkpoints %>% group_by(taskId) %>% count() %>%
   ggplot(aes(x = n, fill = n)) +
   geom_bar() +
   geom_text(stat='count', aes(label=..count..), position = position_dodge(width = 1),vjust = -0.5, size = 2)+ ggtitle("Records Count in Tasks ")
+
+ggsave(file.path('graphs', 'record_count.png'))
 ```
 
-## GPU Serial
+
+
+
+### GPU Serial
 
 
 There is no information about the models of the graphics cards on the data. But the GPU serial numbers contain the manufacturing information of cards.  For example:
@@ -240,6 +257,12 @@ There is no information about the models of the graphics cards on the data. But 
 (this example is taken from MSI's site; https://us.msi.com/page/warranty/vga)
 
 ```{r}
+
+```
+
+
+```{r}
+png(height=320, width=320, file=file.path('graphs', 'gpu_serial.png'))
 plot(unique(gpu$gpuSerial), main="GPU serial numbers")
 ```
 
