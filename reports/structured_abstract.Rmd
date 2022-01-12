@@ -1,0 +1,28 @@
+---
+title: "Structured Abstract"
+subtitle: "Cloud Computing - CSC8634"
+author: "Muzaffer Senkal - 210351491"
+output:
+  pdf_document: default
+---
+
+## Context
+
+Measuring system performance, discovering findings, and optimizing based on them is crucial and unavoidable in big cloud-based systems.
+
+## Objective
+
+The goal of this project is to assess the current cloud system's performance and identify optimization opportunities for improvements.
+
+## Method
+
+This data mining project has been carried out using the CRISP-DM methodology. Exploratory Data Analysis techniques were used to obtain useful and important information. The Git tool has contributed in the repeatability and reproducibility of the project. 
+
+
+## Results
+
+The result from this study, rendering event is the most time-consuming activity and  the rendering time  varies different particular tiles, for example, uncomplicated or monochrome structures and places is also very low. Furthermore, there is a loss of approximately 2.5 minutes for each machine during task scheduling. In addition, there is also a performance difference between the graphics cards in the system.
+
+## Novelty
+
+It helps the University of Newcastle and other organisations to use the outcomes from this data mining investigation in their systems and studies.
