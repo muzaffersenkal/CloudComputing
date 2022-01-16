@@ -27,12 +27,11 @@ load.project()
 
 # Introduction
 
+With the increase in IOT devices in recent years, digital twin technology plays an important role for companies.It is a virtual representation of the physical system [1].
+It helps companies or organizations measure and visualize the performance of products in real time, as well as understand how they will perform in the future.
 
 # Business Understanding
 
-
-With the increase in IOT devices in recent years, digital twin technology plays an important role for companies.It is a virtual representation of the physical system [1].
-It helps companies or organizations measure and visualize the performance of products in real time, as well as understand how they will perform in the future.
 
 The Newcastle Urban Observatory has been gathering environmental data from IoT devices which are located in Newcastle-upon Tyne. This data is presented in a browser by making a 3D visualization of the city. These visualization images are not simple image, they contain over one trillion pixels called terapixel images [2]. It allows viewers to interactively zoom into incredible detail on big data at multiple scales. On these images, the data received from the sensors such as temperature, humidity are shown live. Terapixel visualizations is is a crucial computational cost, so the university has used Microsoft Azure cloud services to  perform the rendering process. Totally 1024 public cloud GPU nodes are used for this cost. 
 
@@ -268,8 +267,7 @@ There is no information about the models of the graphics cards on the data. But 
 
 
 **Serial no:** 07SB1609001016
-**Description:** Within the serial number after the letter B, the 16 represents the year and the 09 represents the month of manufacture. In this example, this VGA card was manufactured on September 2016.
-(this example is taken from MSI's site; https://us.msi.com/page/warranty/vga)
+**Description:** Within the serial number after the letter B, the 16 represents the year and the 09 represents the month of manufacture [3]. In this example, this VGA card was manufactured on September 2016.
 
 ```{r echo=FALSE}
 include_graphics(paste0(getwd(),"/graphs/gpu_serial.png")) 
@@ -514,11 +512,25 @@ include_graphics(paste0(getwd(),"/graphs/deployment.png"))
 
 The University of Newcastle has implemented a platform project that can provide 3D visualization by collecting data from IoT devices in the city. It carried out in the field of digital twins, visualization is presented with therapist images which containing million megapixels. To produce this type of image, a high-capacity gpu-based cloud infrastructure is used. In this study, we aimed to evaluate the performance and efficiency of the current system and identify improvements for the future. This data mining project has been carried out using the CRISP-DM methodology. Exploratory Data Analysis techniques were used to obtain useful and important information. All analyzes and results are reported in this document.
 
+
+# Future Implications
+
+The future implications of this study are that efficiency and performance analysis can be measured by examining the metrics of their systems in large cloud architectures. At the same time, new knowledge may be found through analysis. These studies can increase the efficiency of companies and stakeholders.
+
+
+# Personal Reflections
+
+CRISP-DM methodology was applied in this project, providing a uniform framework for planning and managing the project. While developing the project, Git tool was used to speed us up, help us maximize efficiency and provide versioning. Since our data set is a time series, it required high processing power in data manipulations. At this point, writing efficient code was significantly effective. With the Tidyverse package, it helped us a lot in terms of time and performance in data manipulation operations.
+
+
+
 # References
 
 1. Maggie Mae Armstrong. (2020, December 4). Cheat sheet: What is Digital Twin? Internet of Things blog. IBM Business Operations Blog. https://www.ibm.com/blogs/internet-of-things/iot-cheat-sheet-digital-twin/
 
 2. Holliman, N. S., Antony, M., Charlton, J., Dowsland, S., James, P., & Turner, M. (2019). Petascale Cloud Supercomputing for Terapixel Visualization of a Digital Twin. ArXiv.org. https://arxiv.org/abs/1902.04820
+
+3. (2022). Msi.com. https://us.msi.com/page/warranty/vga
 
 
 
