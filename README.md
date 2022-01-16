@@ -11,9 +11,7 @@ It is very important to examine and monitor the performance of a running system.
 ## Deliverables
 
 -   Report file  => `reports/report.RMD` or `reports/report.pdf`.
--   Critical reflection report file => `reports/short_report.RMD` or `reports/short_report.pdf`.
--   Presentation =>  `docs/Presentation.pdf` or `docs/Presentation.pptx`.
--   Presentation video  =>  `docs/Presentation.mp4`.
+-   Structured Abstract => `reports/structured_abstract.RMD` or `reports/structured_abstract.pdf`
 -   Git Log file => `logs/210351491_GitLogFile.txt`.
 
 ## Getting Started
