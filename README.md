@@ -1,9 +1,9 @@
 ## About The Project
 
-With the increase in IOT devices in recent years, digital twin technology plays an important role for companies.It is a virtual representation of the physical system [1].
+With the increase in IOT devices in recent years, digital twin technology plays an important role for companies.It is a virtual representation of the physical system.
 It helps companies or organizations measure and visualize the performance of products in real time, as well as understand how they will perform in the future.
 
-The Newcastle Urban Observatory has been gathering environmental data from IoT devices which are located in Newcastle-upon Tyne. This data is presented in a browser by making a 3D visualization of the city. These visualization images are not simple image, they contain over one trillion pixels called terapixel images [2]. It allows viewers to interactively zoom into incredible detail on big data at multiple scales. On these images, the data received from the sensors such as temperature, humidity are shown live. Terapixel visualizations is is a crucial computational cost, so the university has used Microsoft Azure cloud services to  perform the rendering process. Totally 1024 public cloud GPU nodes are used for this cost. 
+The Newcastle Urban Observatory has been gathering environmental data from IoT devices which are located in Newcastle-upon Tyne. This data is presented in a browser by making a 3D visualization of the city. These visualization images are not simple image, they contain over one trillion pixels called terapixel images. It allows viewers to interactively zoom into incredible detail on big data at multiple scales. On these images, the data received from the sensors such as temperature, humidity are shown live. Terapixel visualizations is is a crucial computational cost, so the university has used Microsoft Azure cloud services to  perform the rendering process. Totally 1024 public cloud GPU nodes are used for this cost. 
 
 
 It is very important to examine and monitor the performance of a running system. It determines the action to be taken so that the system can work better. It is useful not only to detect current performance issues, but also to identify other needs that may need improvement soon. Therefore, in this data mining project, the performance of the gpu-based system will be analyzed.
