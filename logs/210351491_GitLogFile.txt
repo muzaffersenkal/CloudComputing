@@ -1,0 +1,95 @@
+commit 66705132af7a0e6d1663b828a32c864d943119fe
+Author: Muzaffer Şenkal <muzaffer727@hotmail.com>
+Date:   Sun Jan 16 15:25:07 2022 +0000
+
+    personal reflection
+
+commit 84fe81e6b153b28710e93299447599de74238aa9
+Author: Muzaffer Şenkal <muzaffer727@hotmail.com>
+Date:   Wed Jan 12 17:19:16 2022 +0000
+
+    structured abstract
+
+commit fc326e8d11da098f7488678ebf918ff2c7452541
+Author: Muzaffer Şenkal <muzaffer727@hotmail.com>
+Date:   Wed Jan 12 15:05:10 2022 +0000
+
+    report
+
+commit d893af5af61866e3af5d6e6143b12acae599a665
+Author: Muzaffer Şenkal <muzaffer727@hotmail.com>
+Date:   Mon Jan 10 22:12:01 2022 +0000
+
+    deployment stage, dashboard created
+
+commit 929213eecd68625b309a99c8335c51b404f9fbeb
+Author: Muzaffer Şenkal <muzaffer727@hotmail.com>
+Date:   Mon Jan 10 17:14:35 2022 +0000
+
+    evaluation part
+
+commit 2c07c581836258659229f2a14ffbb59d90296453
+Author: Muzaffer Şenkal <muzaffer727@hotmail.com>
+Date:   Mon Jan 10 17:13:57 2022 +0000
+
+    evaluation part
+
+commit 1003e99a5697bdef5fd0bc0caa489f382e172ef6
+Author: Muzaffer Şenkal <muzaffer727@hotmail.com>
+Date:   Mon Jan 10 15:17:40 2022 +0000
+
+    modeling variation in computation requirements
+
+commit cebc7ee60482c57d0e484b40b3d029b85d7c9ee1
+Author: Muzaffer Şenkal <muzaffer727@hotmail.com>
+Date:   Sun Jan 9 22:23:05 2022 +0000
+
+    efficiency of the task scheduling
+
+commit c707e044eea0049335a545d22bfe212a0123dcd7
+Author: Muzaffer Şenkal <muzaffer727@hotmail.com>
+Date:   Sun Jan 9 01:57:17 2022 +0000
+
+    modeling , first 3 bussiness objective answered
+
+commit 77539cd00aa08bb6d0b76adc45ba97bfd3878902
+Author: Muzaffer Şenkal <muzaffer727@hotmail.com>
+Date:   Wed Jan 5 23:50:21 2022 +0000
+
+    readme file updated
+
+commit c289854e2dad9373ad953ed558d5754ae0436800
+Author: Muzaffer Şenkal <muzaffer727@hotmail.com>
+Date:   Wed Jan 5 23:22:26 2022 +0000
+
+    data preparation process applied
+
+commit dc71e4ddd74c737406bdd2d36f4592abebc7de18
+Author: Muzaffer Şenkal <muzaffer727@hotmail.com>
+Date:   Thu Dec 30 22:47:33 2021 +0000
+
+    exploratory data analysis performed
+
+commit 34c95b4a74ebd570625e6acc5eadd824fb6a0442
+Author: Muzaffer Şenkal <muzaffer727@hotmail.com>
+Date:   Sat Dec 11 01:44:55 2021 +0000
+
+    data quality examined
+
+commit 1a0ec12302803ed0199fbc9da05add64a894fcde
+Author: Muzaffer Şenkal <muzaffer727@hotmail.com>
+Date:   Fri Dec 10 21:41:06 2021 +0000
+
+    data understanding and column description added
+
+commit f7966b8458636b25aaa3be80ce55d2f410ddadaf
+Author: Muzaffer Şenkal <muzaffer727@hotmail.com>
+Date:   Fri Dec 10 18:42:01 2021 +0000
+
+    research has been done about the business, and business problem defined
+
+commit 7ff8075371a245794c72eb8424d02f23f52f14f1
+Author: Muzaffer Şenkal <muzaffer727@hotmail.com>
+Date:   Tue Dec 7 11:39:06 2021 +0000
+
+    first commit
